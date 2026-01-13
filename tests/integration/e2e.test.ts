@@ -11,18 +11,19 @@ const cliPath = join(process.cwd(), 'dist', 'cli.js');
 // Helper to run CLI commands
 function runCli(args: string, cwd?: string): { stdout: string; stderr: string; exitCode: number } {
   try {
-    const stdout = execSync(`node ${cliPath} ${args}`, {
+    const stdout = execSync(`node "${cliPath}" ${args}`, {
       cwd: cwd || testTempDir,
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe'],
+      shell: true, // Use shell to handle paths properly on Windows
     });
     return { stdout, stderr: '', exitCode: 0 };
   } catch (error: unknown) {
-    const err = error as { stdout?: string; stderr?: string; status?: number };
+    const err = error as { stdout?: string; stderr?: string; status?: number; code?: number };
     return {
       stdout: err.stdout || '',
       stderr: err.stderr || '',
-      exitCode: err.status || 1,
+      exitCode: err.status || err.code || 1,
     };
   }
 }
@@ -155,8 +156,9 @@ describe('End-to-end CLI tests', () => {
       const sourceDir = join(testTempDir, 'source-skills');
       createTestSkill(sourceDir, 'local-skill', 'Local skill');
 
-      // Install to project
-      const result = runCli(`install ${join(sourceDir, 'local-skill')} -y`);
+      // Install to project - quote the path for Windows compatibility
+      const installPath = join(sourceDir, 'local-skill');
+      const result = runCli(`install "${installPath}" -y`);
 
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain('Installed');
@@ -172,7 +174,8 @@ describe('End-to-end CLI tests', () => {
       createTestSkill(sourceDir, 'skill-one', 'First skill');
       createTestSkill(sourceDir, 'skill-two', 'Second skill');
 
-      const result = runCli(`install ${sourceDir} -y`);
+      // Quote the path for Windows compatibility
+      const result = runCli(`install "${sourceDir}" -y`);
 
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain('skill-one');
@@ -254,8 +257,9 @@ describe('End-to-end CLI tests', () => {
       const sourceDir = join(testTempDir, 'source');
       createTestSkill(sourceDir, 'overwrite-skill', 'Updated');
 
-      // Install with -y should overwrite
-      const result = runCli(`install ${join(sourceDir, 'overwrite-skill')} -y`);
+      // Install with -y should overwrite - quote the path for Windows compatibility
+      const installPath = join(sourceDir, 'overwrite-skill');
+      const result = runCli(`install "${installPath}" -y`);
 
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain('Overwriting');

@@ -14,8 +14,16 @@ import type { InstallOptions } from '../types.js';
  * Check if source is a local path
  */
 function isLocalPath(source: string): boolean {
+  // Check for Unix absolute paths
+  if (source.startsWith('/')) {
+    return true;
+  }
+  // Check for Windows absolute paths (e.g., C:\ or E:\)
+  if (/^[A-Za-z]:[\\/]/.test(source)) {
+    return true;
+  }
+  // Check for relative paths
   return (
-    source.startsWith('/') ||
     source.startsWith('./') ||
     source.startsWith('../') ||
     source.startsWith('~/')
@@ -194,7 +202,10 @@ async function installSingleLocalSkill(
   // Security: ensure target path stays within target directory
   const resolvedTargetPath = resolve(targetPath);
   const resolvedTargetDir = resolve(targetDir);
-  if (!resolvedTargetPath.startsWith(resolvedTargetDir + sep)) {
+  // Normalize paths for comparison (handle both / and \ separators)
+  const normalizedTargetPath = resolvedTargetPath.replace(/\\/g, '/');
+  const normalizedTargetDir = resolvedTargetDir.replace(/\\/g, '/');
+  if (!normalizedTargetPath.startsWith(normalizedTargetDir + '/')) {
     console.error(chalk.red(`Security error: Installation path outside target directory`));
     process.exit(1);
   }
@@ -244,7 +255,10 @@ async function installSpecificSkill(
   // Security: ensure target path stays within target directory
   const resolvedTargetPath = resolve(targetPath);
   const resolvedTargetDir = resolve(targetDir);
-  if (!resolvedTargetPath.startsWith(resolvedTargetDir + sep)) {
+  // Normalize paths for comparison (handle both / and \ separators)
+  const normalizedTargetPath = resolvedTargetPath.replace(/\\/g, '/');
+  const normalizedTargetDir = resolvedTargetDir.replace(/\\/g, '/');
+  if (!normalizedTargetPath.startsWith(normalizedTargetDir + '/')) {
     console.error(chalk.red(`Security error: Installation path outside target directory`));
     process.exit(1);
   }
@@ -370,7 +384,10 @@ async function installFromRepo(
     // Security: ensure target path stays within target directory
     const resolvedTargetPath = resolve(info.targetPath);
     const resolvedTargetDir = resolve(targetDir);
-    if (!resolvedTargetPath.startsWith(resolvedTargetDir + sep)) {
+    // Normalize paths for comparison (handle both / and \ separators)
+    const normalizedTargetPath = resolvedTargetPath.replace(/\\/g, '/');
+    const normalizedTargetDir = resolvedTargetDir.replace(/\\/g, '/');
+    if (!normalizedTargetPath.startsWith(normalizedTargetDir + '/')) {
       console.error(chalk.red(`Security error: Installation path outside target directory`));
       continue;
     }

@@ -181,8 +181,11 @@ describe('skills.ts', () => {
       const skill = findSkill('my-skill');
 
       expect(skill).not.toBeNull();
-      expect(skill?.path).toContain('my-skill/SKILL.md');
-      expect(skill?.baseDir).toContain('my-skill');
+      // Use path normalization for cross-platform compatibility
+      const normalizedPath = skill?.path.replace(/\\/g, '/');
+      expect(normalizedPath).toContain('my-skill/SKILL.md');
+      const normalizedBaseDir = skill?.baseDir.replace(/\\/g, '/');
+      expect(normalizedBaseDir).toContain('my-skill');
     });
 
     it('should find symlinked skills by name', () => {
@@ -191,7 +194,9 @@ describe('skills.ts', () => {
       const skill = findSkill('linked-skill');
 
       expect(skill).not.toBeNull();
-      expect(skill?.path).toContain('linked-skill/SKILL.md');
+      // Use path normalization for cross-platform compatibility
+      const normalizedPath = skill?.path.replace(/\\/g, '/');
+      expect(normalizedPath).toContain('linked-skill/SKILL.md');
     });
 
     it('should return null for non-existent skill', () => {
