@@ -32,3 +32,9 @@ export interface Repository {
 export interface RepositoriesConfig {
   repositories: Repository[];
 }
+
+export interface UploadOptions {
+  repo?: string;
+  message?: string;
+  yes?: boolean;
+}

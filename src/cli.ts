@@ -8,6 +8,7 @@ import { removeSkill } from './commands/remove.js';
 import { manageSkills } from './commands/manage.js';
 import { syncAgentsMd } from './commands/sync.js';
 import { addRepo, removeRepo, listRepos } from './commands/repo.js';
+import { uploadSkill } from './commands/upload.js';
 
 const program = new Command();
 
@@ -91,5 +92,14 @@ repoCommand
   .command('list')
   .description('List all configured repositories')
   .action(listRepos);
+
+// Upload command
+program
+  .command('upload [skill-name]')
+  .description('Upload a skill to a configured repository')
+  .option('-r, --repo <name>', 'Repository name (skip selection)')
+  .option('-m, --message <msg>', 'Commit message')
+  .option('-y, --yes', 'Skip all confirmation prompts')
+  .action(uploadSkill);
 
 program.parse();
