@@ -54,33 +54,33 @@ OpenSkills replicates Claude Code's skills system with **100% compatibility**:
 
 ### 1. Install
 
-**方式一：从 npm 安装（推荐）**
+**Method 1: Install from npm (recommended)**
 
 ```bash
 npm i -g openskills
 ```
 
-**方式二：从源码构建并本地安装**
+**Method 2: Build from source and install locally**
 
 ```bash
-# 克隆项目
+# Clone the repository
 git clone https://github.com/numman-ali/openskills.git
 cd openskills
 
-# 安装依赖
+# Install dependencies
 npm install
 
-# 构建项目
+# Build the project
 npm run build
 
-# 本地链接（创建全局符号链接）
+# Create global symlink
 npm link
 
-# 验证安装
+# Verify installation
 openskills --version
 ```
 
-使用 `npm link` 后，`openskills` 命令将指向本地构建的版本。如需取消链接，运行 `npm unlink -g openskills`。
+After using `npm link`, the `openskills` command will point to your locally built version. To unlink, run `npm unlink -g openskills`.
 
 ### 2. Install Skills
 
@@ -439,92 +439,92 @@ openskills manage
 
 ### Repository Management
 
-OpenSkills 支持将技能上传到 Git 仓库，方便分享和管理自定义技能。
+OpenSkills supports uploading skills to Git repositories for easy sharing and management of custom skills.
 
-**添加仓库：**
+**Add repository:**
 ```bash
-# 添加 GitHub 仓库（SSH）
+# Add GitHub repository (SSH)
 openskills repo add my-skills git@github.com:your-org/my-skills.git
 
-# 添加 GitHub 仓库（HTTPS）
+# Add GitHub repository (HTTPS)
 openskills repo add my-skills https://github.com/your-org/my-skills.git
 
-# 添加其他 Git 仓库
+# Add other Git repositories
 openskills repo add company-skills https://git.company.com/team/skills.git
 ```
 
-**列出配置的仓库：**
+**List configured repositories:**
 ```bash
 openskills repo list
-# → 显示所有已配置的仓库名称、URL 和添加日期
+# → Shows all configured repository names, URLs, and dates added
 ```
 
-**删除仓库：**
+**Remove repository:**
 ```bash
 openskills repo remove my-skills
-# → 交互式确认删除（使用 -y 跳过确认）
+# → Interactive confirmation (use -y to skip confirmation)
 ```
 
 ### Upload Skills to Repository
 
-将已安装的技能上传到配置的 Git 仓库。技能会被放置在仓库的 `skills/<skill-name>/` 目录中。
+Upload installed skills to configured Git repositories. Skills will be placed in the `skills/<skill-name>/` directory of the repository.
 
-**基本用法：**
+**Basic usage:**
 ```bash
-# 交互式选择技能和仓库
+# Interactive selection of skills and repository
 openskills upload
 
-# 上传指定技能（交互式选择仓库）
+# Upload specific skill (interactive repository selection)
 openskills upload pdf
 
-# 指定仓库上传
+# Specify repository
 openskills upload pdf --repo my-skills
 
-# 上传多个技能（交互式多选）
+# Upload multiple skills (interactive multi-select)
 openskills upload
-# → 复选框选择要上传的技能
-# → 选择目标仓库
+# → Checkbox to select skills to upload
+# → Select target repository
 ```
 
-**上传选项：**
+**Upload options:**
 ```bash
-# 指定提交信息
+# Specify commit message
 openskills upload pdf --repo my-skills --message "Update PDF skill with new features"
 
-# 跳过所有确认提示（用于脚本/CI）
+# Skip all confirmation prompts (for scripts/CI)
 openskills upload pdf --repo my-skills --yes
 
-# 组合使用
+# Combine options
 openskills upload --repo my-skills --message "Upload skills" --yes
 ```
 
-**上传流程：**
-1. 选择要上传的技能（支持多选）
-2. 选择目标仓库（如果未指定 `--repo`）
-3. 自动克隆或更新本地仓库副本（存储在 `~/.openskills/repos/`）
-4. 将技能复制到 `skills/<skill-name>/` 目录
-5. 自动移除技能中的 `.git` 目录（防止子模块问题）
-6. 提交更改并推送到远程仓库
+**Upload process:**
+1. Select skills to upload (supports multi-select)
+2. Select target repository (if `--repo` not specified)
+3. Automatically clone or update local repository copy (stored in `~/.openskills/repos/`)
+4. Copy skills to `skills/<skill-name>/` directory
+5. Automatically remove `.git` directory from skills (prevents submodule issues)
+6. Commit changes and push to remote repository
 
-**注意事项：**
-- 如果技能已存在于仓库中，会提示是否覆盖（使用 `--yes` 自动覆盖）
-- 上传前会自动清理技能中的 `.git` 目录，确保作为普通文件而非子模块添加
-- 需要配置 Git 用户信息（`git config --global user.name` 和 `user.email`）
-- 需要配置 Git 认证（SSH 密钥或凭证助手）以推送到远程仓库
+**Notes:**
+- If skill already exists in repository, prompts for overwrite (use `--yes` to auto-overwrite)
+- Automatically cleans `.git` directory from skills before upload, ensuring they're added as regular files rather than submodules
+- Requires Git user configuration (`git config --global user.name` and `user.email`)
+- Requires Git authentication (SSH keys or credential helper) to push to remote repository
 
-**示例工作流：**
+**Example workflow:**
 ```bash
-# 1. 添加仓库
+# 1. Add repository
 openskills repo add my-skills git@github.com:your-org/my-skills.git
 
-# 2. 安装或开发技能
+# 2. Install or develop skills
 openskills install anthropics/skills
-# 或开发自定义技能到 .claude/skills/my-custom-skill/
+# Or develop custom skill to .claude/skills/my-custom-skill/
 
-# 3. 上传技能
+# 3. Upload skill
 openskills upload my-custom-skill --repo my-skills
 
-# 4. 其他人可以安装
+# 4. Others can install
 openskills install your-org/my-skills
 ```
 
