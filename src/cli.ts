@@ -7,6 +7,7 @@ import { readSkill } from './commands/read.js';
 import { removeSkill } from './commands/remove.js';
 import { manageSkills } from './commands/manage.js';
 import { syncAgentsMd } from './commands/sync.js';
+import { addRepo, removeRepo, listRepos } from './commands/repo.js';
 
 const program = new Command();
 
@@ -67,5 +68,28 @@ program
   .alias('rm')
   .description('Remove specific skill (for scripts, use manage for interactive)')
   .action(removeSkill);
+
+// Repository management commands
+const repoCommand = program
+  .command('repo')
+  .description('Manage skill repositories');
+
+repoCommand
+  .command('add <name> <url>')
+  .description('Add a skill repository')
+  .option('-y, --yes', 'Skip confirmation prompts')
+  .action(addRepo);
+
+repoCommand
+  .command('remove <name>')
+  .alias('rm')
+  .description('Remove a skill repository')
+  .option('-y, --yes', 'Skip confirmation prompts')
+  .action(removeRepo);
+
+repoCommand
+  .command('list')
+  .description('List all configured repositories')
+  .action(listRepos);
 
 program.parse();

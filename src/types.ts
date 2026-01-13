@@ -22,3 +22,13 @@ export interface SkillMetadata {
   description: string;
   context?: string;
 }
+
+export interface Repository {
+  name: string;
+  url: string;
+  addedAt: string;
+}
+
+export interface RepositoriesConfig {
+  repositories: Repository[];
+}
