@@ -54,9 +54,33 @@ OpenSkills replicates Claude Code's skills system with **100% compatibility**:
 
 ### 1. Install
 
+**方式一：从 npm 安装（推荐）**
+
 ```bash
 npm i -g openskills
 ```
+
+**方式二：从源码构建并本地安装**
+
+```bash
+# 克隆项目
+git clone https://github.com/numman-ali/openskills.git
+cd openskills
+
+# 安装依赖
+npm install
+
+# 构建项目
+npm run build
+
+# 本地链接（创建全局符号链接）
+npm link
+
+# 验证安装
+openskills --version
+```
+
+使用 `npm link` 后，`openskills` 命令将指向本地构建的版本。如需取消链接，运行 `npm unlink -g openskills`。
 
 ### 2. Install Skills
 
