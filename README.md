@@ -313,6 +313,10 @@ openskills list                        # Show installed skills
 openskills read <name>                 # Load skill (for agents)
 openskills manage                      # Remove skills (interactive)
 openskills remove <name>               # Remove specific skill
+openskills repo add <name> <url>       # Add repository for skill uploads
+openskills repo remove <name>          # Remove repository
+openskills repo list                   # List configured repositories
+openskills upload [skill-name] [options] # Upload skill(s) to repository
 ```
 
 ### Flags
@@ -407,6 +411,97 @@ openskills sync
 openskills manage
 # → Checkbox to select which skills to remove
 # → Nothing checked by default (safe)
+```
+
+### Repository Management
+
+OpenSkills 支持将技能上传到 Git 仓库，方便分享和管理自定义技能。
+
+**添加仓库：**
+```bash
+# 添加 GitHub 仓库（SSH）
+openskills repo add my-skills git@github.com:your-org/my-skills.git
+
+# 添加 GitHub 仓库（HTTPS）
+openskills repo add my-skills https://github.com/your-org/my-skills.git
+
+# 添加其他 Git 仓库
+openskills repo add company-skills https://git.company.com/team/skills.git
+```
+
+**列出配置的仓库：**
+```bash
+openskills repo list
+# → 显示所有已配置的仓库名称、URL 和添加日期
+```
+
+**删除仓库：**
+```bash
+openskills repo remove my-skills
+# → 交互式确认删除（使用 -y 跳过确认）
+```
+
+### Upload Skills to Repository
+
+将已安装的技能上传到配置的 Git 仓库。技能会被放置在仓库的 `skills/<skill-name>/` 目录中。
+
+**基本用法：**
+```bash
+# 交互式选择技能和仓库
+openskills upload
+
+# 上传指定技能（交互式选择仓库）
+openskills upload pdf
+
+# 指定仓库上传
+openskills upload pdf --repo my-skills
+
+# 上传多个技能（交互式多选）
+openskills upload
+# → 复选框选择要上传的技能
+# → 选择目标仓库
+```
+
+**上传选项：**
+```bash
+# 指定提交信息
+openskills upload pdf --repo my-skills --message "Update PDF skill with new features"
+
+# 跳过所有确认提示（用于脚本/CI）
+openskills upload pdf --repo my-skills --yes
+
+# 组合使用
+openskills upload --repo my-skills --message "Upload skills" --yes
+```
+
+**上传流程：**
+1. 选择要上传的技能（支持多选）
+2. 选择目标仓库（如果未指定 `--repo`）
+3. 自动克隆或更新本地仓库副本（存储在 `~/.openskills/repos/`）
+4. 将技能复制到 `skills/<skill-name>/` 目录
+5. 自动移除技能中的 `.git` 目录（防止子模块问题）
+6. 提交更改并推送到远程仓库
+
+**注意事项：**
+- 如果技能已存在于仓库中，会提示是否覆盖（使用 `--yes` 自动覆盖）
+- 上传前会自动清理技能中的 `.git` 目录，确保作为普通文件而非子模块添加
+- 需要配置 Git 用户信息（`git config --global user.name` 和 `user.email`）
+- 需要配置 Git 认证（SSH 密钥或凭证助手）以推送到远程仓库
+
+**示例工作流：**
+```bash
+# 1. 添加仓库
+openskills repo add my-skills git@github.com:your-org/my-skills.git
+
+# 2. 安装或开发技能
+openskills install anthropics/skills
+# 或开发自定义技能到 .claude/skills/my-custom-skill/
+
+# 3. 上传技能
+openskills upload my-custom-skill --repo my-skills
+
+# 4. 其他人可以安装
+openskills install your-org/my-skills
 ```
 
 ---
